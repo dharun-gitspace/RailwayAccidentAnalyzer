@@ -48,7 +48,7 @@ This application helps analyze patterns in railway accidents across India, ident
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/indian-railway-accidents-analysis.git
+git clone https://github.com/yourusername/RailwayAccidentAnalyzer.git
 cd indian-railway-accidents-analysis
 ```
 
