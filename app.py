@@ -25,7 +25,6 @@ from visualization import (
 # Import model modules
 from severity_model import SeverityModel
 from anomaly_detection import AnomalyDetector
-from association_mining import AssociationMiner
 
 # Set page configuration
 st.set_page_config(

@@ -303,55 +303,7 @@ def plot_accident_types(df):
     
     return fig
 
-def plot_association_rules(rules):
-    """
-    Visualize association rules.
-    
-    Args:
-        rules: DataFrame with association rules
-        
-    Returns:
-        Plotly figure object
-    """
-    # Create a scatter plot of support vs. confidence, with lift as color
-    fig = px.scatter(
-        rules,
-        x='support',
-        y='confidence',
-        color='lift',
-        size='lift',
-        # Don't include frozensets in hover data as they can't be JSON serialized
-        # The antecedents and consequents should already be converted to strings
-        hover_data=['antecedents', 'consequents'], 
-        color_continuous_scale='Viridis',
-        opacity=0.8
-    )
-    
-    # Add reference lines
-    fig.add_shape(
-        type='line',
-        x0=0, y0=0.5,
-        x1=1, y1=0.5,
-        line=dict(color='red', dash='dash')
-    )
-    
-    fig.add_shape(
-        type='line',
-        x0=0, y0=0.7,
-        x1=1, y1=0.7,
-        line=dict(color='green', dash='dash')
-    )
-    
-    # Update layout
-    fig.update_layout(
-        title='Association Rules: Support vs. Confidence',
-        xaxis_title='Support',
-        yaxis_title='Confidence',
-        coloraxis_colorbar_title='Lift',
-        height=600
-    )
-    
-    return fig
+
 
 def plot_anomalies(df, anomalies):
     """
