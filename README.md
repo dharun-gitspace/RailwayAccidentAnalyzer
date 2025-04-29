@@ -49,7 +49,7 @@ This application helps analyze patterns in railway accidents across India, ident
 1. Clone the repository
 ```bash
 git clone https://github.com/yourusername/RailwayAccidentAnalyzer.git
-cd indian-railway-accidents-analysis
+cd RailwayAccidentAnalyzer
 ```
 
 2. Install required packages
