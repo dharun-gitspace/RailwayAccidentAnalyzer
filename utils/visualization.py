@@ -320,7 +320,9 @@ def plot_association_rules(rules):
         y='confidence',
         color='lift',
         size='lift',
-        hover_data=['antecedents', 'consequents'],
+        # Don't include frozensets in hover data as they can't be JSON serialized
+        # The antecedents and consequents should already be converted to strings
+        hover_data=['antecedents', 'consequents'], 
         color_continuous_scale='Viridis',
         opacity=0.8
     )

@@ -99,7 +99,12 @@ class AssociationMiner:
             # Sort by lift
             self.rules = self.rules.sort_values('lift', ascending=False)
             
-            return self.rules
+            # Convert frozensets to strings for JSON serialization
+            rules_copy = self.rules.copy()
+            rules_copy['antecedents'] = rules_copy['antecedents'].apply(lambda x: str(list(x)))
+            rules_copy['consequents'] = rules_copy['consequents'].apply(lambda x: str(list(x)))
+            
+            return rules_copy
             
         except Exception as e:
             print(f"Error in mining association rules: {e}")
