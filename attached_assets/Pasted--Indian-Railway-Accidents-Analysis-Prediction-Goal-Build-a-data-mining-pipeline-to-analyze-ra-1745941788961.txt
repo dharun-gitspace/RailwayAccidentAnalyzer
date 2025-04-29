@@ -1,0 +1,115 @@
+# Indian Railway Accidents Analysis & Prediction
+
+## Goal
+Build a data mining pipeline to analyze railway accidents and predict severity using Streamlit.
+
+## Dataset
+- **File:** `indian_railway_accidents.csv`
+- **Time Period:** 1902–2024
+
+## Focus Areas
+- Accident Severity Prediction
+- Geospatial Hotspot Analysis
+- Temporal Trends
+- Association Rule Mining
+- Missing Data Imputation
+- Anomaly Detection
+
+## Requirements
+
+### 1. Data Preprocessing & Enrichment
+
+#### Standardize Fields
+- Convert historical state names to modern equivalents (e.g., "Madras Presidency" → "Tamil Nadu").
+- Replace "Not specified" with `NaN` for consistent missing value handling.
+
+#### Geocoding
+- Use OpenStreetMap or Google Maps API to fetch latitude/longitude for location entries (e.g., "Mangapatnam" → 14.4500°N, 80.1500°E).
+- If geocoding fails, aggregate data at the state level.
+
+#### Temporal Features
+- Extract `Year`, `Month`, and `Decade` from the `Date` column.
+
+#### Handle Missing Data
+- Impute missing `Cause` based on `Accident_Type` (e.g., "Bridge collapse" → "Infrastructure failure").
+- For missing `Fatalities` and `Injuries`, use the median grouped by `Accident_Type` and `State`.
+
+### 2. Project Execution Pipeline
+
+#### 2.1 Accident Severity Prediction
+- **Target Variable:**
+  - Low: Fatalities ≤ 10
+  - Medium: 10 < Fatalities ≤ 50
+  - High: Fatalities > 50
+- **Features:** Accident_Type, Cause, State, Decade, Train_Involved
+- **Model:** Random Forest or XGBoost
+- **Validation:** Stratified cross-validation + F1-score
+
+#### 2.2 Geospatial Hotspot Analysis
+- **Input:** Geocoded coordinates or state-level aggregates
+- **Clustering:** DBSCAN to detect dense accident zones
+- **Visualization:** Heatmaps using Plotly or Folium
+
+#### 2.3 Temporal Trend Analysis
+- **Time Series Aggregation:** By year and decade
+- **Analysis:** STL decomposition to isolate trend, seasonality, and residuals
+- **Insights:**
+  - Spikes (e.g., 2023 Odisha collision) linked to sabotage or infrastructure failure
+  - Safety improvements post-2000
+
+#### 2.4 Association Rule Mining
+- **Data Preparation:** Convert categorical columns into itemsets
+- **Algorithm:** FP-Growth
+- **Sample Rule:**
+  - Cause=Sabotage → State=Assam (support=0.2, confidence=0.8)
+- **Filtering:** Rules with lift > 1.5 and confidence > 0.6
+
+#### 2.5 Missing Data Analysis
+- **Analysis:** Identify patterns, especially in pre-1950 data
+- **Imputation Methods:**
+  - MICE for numerical fields (e.g., Fatalities)
+  - Classifier for `Cause` based on `Accident_Type`
+
+#### 2.6 Anomaly Detection
+- **Features:** Fatalities, Injuries, Decade, State
+- **Model:** Isolation Forest
+- **Use Case:** Flagging extreme cases like the 2023 Odisha collision
+- **Validation:** Manual verification using historical records and news sources
+
+## Streamlit Dashboard
+
+### Features
+- Interactive map with Plotly/Folium
+- Filters for decade, state, accident type
+- Severity prediction form
+- Anomaly alerts for high-fatality accidents
+
+### Code Snippet (Example)
+```python
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+st.title("Railway Accidents Dashboard")
+df = pd.read_csv("data/cleaned_accidents.csv")
+fig = px.scatter_mapbox(df, lat="latitude", lon="longitude", color="Fatalities")
+st.plotly_chart(fig)
+```
+
+## Technical Stack
+- **Language:** Python
+- **Libraries:** pandas, scikit-learn, mlxtend, plotly, folium, streamlit, geopy
+
+## File Structure
+```
+/data            # Raw and cleaned CSV
+/notebooks       # Jupyter Notebooks for EDA
+app.py           # Streamlit dashboard
+requirements.txt # Dependencies
+```
+
+## Deliverables
+- Jupyter Notebook for preprocessing and EDA
+- Streamlit app (`app.py`)
+- Exported model files (e.g., `severity_model.pkl`)
+
