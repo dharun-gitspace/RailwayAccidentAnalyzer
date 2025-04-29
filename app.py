@@ -19,7 +19,6 @@ from visualization import (
     plot_temporal_trends, 
     plot_severity_distribution, 
     plot_accident_types,
-    plot_association_rules,
     plot_anomalies
 )
 
@@ -43,7 +42,6 @@ This application analyzes railway accidents in India from 1902 to 2024 and provi
 - Accident severity prediction
 - Geospatial hotspot analysis
 - Temporal trend analysis
-- Association rule mining
 - Anomaly detection
 """)
 
@@ -52,7 +50,7 @@ st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Select a page",
     ["Data Overview", "Severity Prediction", "Geospatial Analysis", 
-     "Temporal Trends", "Association Rules", "Anomaly Detection"]
+     "Temporal Trends", "Anomaly Detection"]
 )
 
 # Load data
@@ -106,14 +104,10 @@ def load_models(df):
     anomaly_detector = AnomalyDetector()
     anomaly_detector.fit(df)
     
-    # Association miner
-    association_miner = AssociationMiner()
-    association_miner.fit(df)
-    
-    return severity_model, anomaly_detector, association_miner
+    return severity_model, anomaly_detector
 
 if df is not None:
-    severity_model, anomaly_detector, association_miner = load_models(df)
+    severity_model, anomaly_detector = load_models(df)
 
 # Data Overview Page
 if page == "Data Overview":
@@ -520,111 +514,7 @@ elif page == "Temporal Trends":
         else:
             st.warning("Not enough data points for time series decomposition. Select a wider year range.")
 
-# Association Rules Page
-elif page == "Association Rules":
-    st.header("Association Rule Mining")
-    
-    st.markdown("""
-    Association rule mining finds relationships between accident attributes.
-    For example, it might discover that certain accident types are more common in particular states.
-    """)
-    
-    # Parameters for association mining
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        min_support = st.slider("Minimum Support", 0.01, 0.5, 0.05, 0.01,
-                             help="Minimum frequency of the itemset in the dataset")
-    
-    with col2:
-        min_confidence = st.slider("Minimum Confidence", 0.1, 1.0, 0.6, 0.05,
-                                help="Minimum reliability of the rule")
-    
-    min_lift = st.slider("Minimum Lift", 1.0, 10.0, 1.2, 0.1,
-                       help="Minimum strength of the rule (how much better than random)")
-    
-    # Field selection
-    st.subheader("Select Fields for Association Analysis")
-    
-    categorical_cols = ['Accident_Type', 'Cause', 'State/Region', 'Train_Involved', 'Decade']
-    
-    selected_fields = st.multiselect(
-        "Fields to Analyze",
-        options=categorical_cols,
-        default=['Accident_Type', 'Cause', 'State/Region']
-    )
-    
-    if selected_fields and len(selected_fields) >= 2:
-        # Run association mining
-        rules = association_miner.mine_rules(
-            df, 
-            selected_fields, 
-            min_support=min_support, 
-            min_confidence=min_confidence,
-            min_lift=min_lift
-        )
-        
-        if rules is not None and not rules.empty:
-            # Display rules
-            st.subheader(f"Association Rules (Found: {len(rules)})")
-            
-            # Plot rules
-            if len(rules) <= 50:
-                rule_fig = plot_association_rules(rules)
-                st.plotly_chart(rule_fig, use_container_width=True)
-            else:
-                st.warning(f"Too many rules ({len(rules)}) to visualize. Showing top 50.")
-                rule_fig = plot_association_rules(rules.head(50))
-                st.plotly_chart(rule_fig, use_container_width=True)
-            
-            # Format rules for display
-            display_rules = []
-            for _, rule in rules.iterrows():
-                antecedents = list(rule['antecedents'])
-                consequents = list(rule['consequents'])
-                
-                antecedent_str = " AND ".join([f"{item.split('=')[0]}={item.split('=')[1]}" for item in antecedents])
-                consequent_str = " AND ".join([f"{item.split('=')[0]}={item.split('=')[1]}" for item in consequents])
-                
-                display_rules.append({
-                    'Rule': f"{antecedent_str} → {consequent_str}",
-                    'Support': rule['support'],
-                    'Confidence': rule['confidence'],
-                    'Lift': rule['lift']
-                })
-            
-            rules_df = pd.DataFrame(display_rules)
-            st.dataframe(rules_df)
-            
-            # Download rules
-            csv = rules_df.to_csv(index=False)
-            st.download_button(
-                label="Download Rules CSV",
-                data=csv,
-                file_name="association_rules.csv",
-                mime="text/csv"
-            )
-            
-            # Interpretation of top rules
-            st.subheader("Top Rules Interpretation")
-            
-            top_rules = rules.sort_values('lift', ascending=False).head(5)
-            for i, (_, rule) in enumerate(top_rules.iterrows()):
-                antecedents = list(rule['antecedents'])
-                consequents = list(rule['consequents'])
-                
-                antecedent_str = " AND ".join([f"{item.split('=')[0]}={item.split('=')[1]}" for item in antecedents])
-                consequent_str = " AND ".join([f"{item.split('=')[0]}={item.split('=')[1]}" for item in consequents])
-                
-                st.write(f"**Rule {i+1}:** {antecedent_str} → {consequent_str}")
-                st.write(f"- Support: {rule['support']:.3f} (occurs in {rule['support']*100:.1f}% of all accidents)")
-                st.write(f"- Confidence: {rule['confidence']:.3f} ({rule['confidence']*100:.1f}% of accidents with {antecedent_str} also have {consequent_str})")
-                st.write(f"- Lift: {rule['lift']:.2f} (this association occurs {rule['lift']:.2f}x more often than if the events were independent)")
-                st.write("---")
-        else:
-            st.warning("No association rules found with the current parameters. Try lowering the thresholds or selecting different fields.")
-    else:
-        st.warning("Please select at least 2 fields for association analysis.")
+
 
 # Anomaly Detection Page
 elif page == "Anomaly Detection":
