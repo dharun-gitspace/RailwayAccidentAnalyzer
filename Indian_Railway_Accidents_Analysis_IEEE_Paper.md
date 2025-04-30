@@ -79,10 +79,10 @@ Our research addresses these gaps by:
 | **Current Study** | **1902-2024** | **India** | **Integrated framework** | **Multiple insights from comprehensive analysis** |
 
 **Figure 1: Evolution of Railway Safety Analysis Methods**
-[Image: Timeline showing progression from statistical methods to integrated machine learning approaches]
+![Timeline showing progression from statistical methods to integrated machine learning approaches](figure1_evolution_of_methods.png)
 
 **Figure 2: Geographical Distribution of Previous Railway Safety Studies**
-[Image: World map highlighting regions covered by previous studies]
+![World map highlighting regions covered by previous studies](figure2_geographical_distribution.png)
 
 ## 3.0 Research Application
 
@@ -164,10 +164,10 @@ The application features an interactive user interface organized into five main 
 Each section provides interactive elements (sliders, dropdown menus, etc.) that allow users to adjust parameters and explore different aspects of the data.
 
 **Figure 3: Application Architecture Diagram**
-[Image: System architecture diagram showing modules and relationships]
+![System architecture diagram showing modules and relationships](figure3_application_architecture.png)
 
 **Figure 4: User Interface Layout**
-[Image: Screenshot of the application interface showing different sections]
+![Screenshot of the application interface showing different sections](figure4_user_interface_layout.png)
 
 ## 4.0 Implementation Details
 
